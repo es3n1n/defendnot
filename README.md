@@ -41,7 +41,7 @@ Usage: defendnot-loader [--help] [--version] [--name VAR] [--disable] [--verbose
 Optional arguments:
   -h, --help         prints help message and exits
   --version          shows version and exits
-  -n, --name         av display name [default: "https://github.com/es3n1n/defendnot"]
+  -n, --name         av display name [default: "dnot.sh"]
   -d, --disable      disable defendnot
   -v, --verbose      verbose logging
   --silent           do not allocate console
