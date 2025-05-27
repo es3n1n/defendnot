@@ -6,7 +6,7 @@ Defendnot is a successor of [no-defender](https://github.com/es3n1n/no-defender)
 
 ![](https://i.imgur.com/epX8wkd.jpeg)
 
-> [!WARNING]
+> [!CAUTION]
 > **Permitted Use Notice**: 
 > 
 > Using this tool to facilitate malware distribution, cybercrime, unauthorized access, evading detection, or any illegal activity is strictly prohibited.
@@ -16,6 +16,9 @@ Defendnot is a successor of [no-defender](https://github.com/es3n1n/no-defender)
 > By downloading, installing, or using this tool, you acknowledge that you have read, understood, and agree to these terms.
 
 ## Installation
+
+> [!TIP]
+> You may need to temporarily disable realtime and tamper protection before proceeding, otherwise defender will block `defendnot` binaries due to the `VirTool:Win64/Defnot.A` detection. 
 
 ### One-liner
 
@@ -63,11 +66,18 @@ Optional arguments:
 There's a WSC (Windows Security Center) service in Windows which is used by antiviruses to let Windows know that there's some other antivirus in the hood and it should disable Windows Defender.  
 This WSC API is undocumented and furthermore requires people to sign an NDA with Microsoft to get its documentation.
 
-The initial implementation of [no-defender](https://github.com/es3n1n/no-defender) used thirdparty code provided by other AVs to register itself in the WSC, while defendnot interacts with WSC directly.
+The initial implementation of [no-defender](https://github.com/es3n1n/no-defender) used thirdparty code provided by other AVs to register itself in the WSC, while `defendnot` interacts with WSC directly.
 
 ## Limitations
 
-Sadly, to keep this WSC stuff even after reboot, defendnot adds itself to the autorun. Thus, you would need to keep the defendnot binaries on your disk :(
+- **Needs to stay on disk:**  
+  To keep the AV registration persistent after reboot, `defendnot` adds itself to autorun. That means the binaries have to remain on your system for the Defender "disable" to stick. (Yeah, I wish it were more elegant too.)
+  
+- **No support for Windows Server:**  
+  The Windows Security Center (WSC) service doesn’t exist on Windows Server editions, so `defendnot` *won’t* work there. See [#17](https://github.com/es3n1n/defendnot/issues/17).
+
+- **Defender Detection:**  
+  Not surprisingly, Windows Defender really doesn’t like `defendnot` and will flag or remove it as `VirTool:Win64/Defnot.A`. You’ll need to (temporarily) disable Defender’s real-time and tamper protection to install.
 
 ## Legitimate Use Cases
 
@@ -76,7 +86,7 @@ Sadly, to keep this WSC stuff even after reboot, defendnot adds itself to the au
 - Educational research on Windows security mechanisms
 - Home lab experimentation and learning
 
-> [!WARNING]
+> [!IMPORTANT]
 > If your intended usage falls outside these legitimate use cases, support in issues/DMs might be denied without any further explanations.
 
 ## Writeup
