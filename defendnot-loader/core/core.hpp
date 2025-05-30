@@ -24,4 +24,5 @@ namespace loader {
     [[nodiscard]] HANDLE inject(std::string_view dll_path, std::string_view proc_name);
     [[nodiscard]] bool add_to_autorun(AutorunType type);
     [[nodiscard]] bool remove_from_autorun();
+    void ensure_environment();
 } // namespace loader

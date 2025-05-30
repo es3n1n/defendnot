@@ -17,7 +17,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)shared\ctx.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared\defer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared\ipc.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)shared\names.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)shared\strings.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared\native.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared\util.hpp" />
   </ItemGroup>

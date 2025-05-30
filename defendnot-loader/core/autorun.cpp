@@ -1,7 +1,7 @@
 #include "core/core.hpp"
 
 #include "shared/ctx.hpp"
-#include "shared/names.hpp"
+#include "shared/strings.hpp"
 
 #include <memory>
 #include <print>
@@ -17,7 +17,7 @@
 
 namespace loader {
     namespace {
-        constexpr std::string_view kTaskName = names::kProjectName;
+        constexpr std::string_view kTaskName = strings::kProjectName;
 
         /// A very basic implementation, a lot of stuff is missing
         template <typename Ty>
@@ -164,7 +164,7 @@ namespace loader {
             principal->put_RunLevel(TASK_RUNLEVEL_HIGHEST);
 
             /// Info
-            reg_info->put_Author(bstr_t(names::kRepoUrl.data()));
+            reg_info->put_Author(bstr_t(strings::kRepoUrl.data()));
 
             /// Start even if we're on batteries
             settings->put_DisallowStartIfOnBatteries(VARIANT_FALSE);

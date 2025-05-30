@@ -23,7 +23,7 @@ namespace native {
 
         auto function = reinterpret_cast<Ty>(GetProcAddress(mod, function_name.data()));
         if (function == nullptr) {
-            throw std::runtime_error(std::format("unable to obtain {} from {}", module_name, function_name));
+            throw std::runtime_error(std::format("unable to obtain {} from {}", function_name, module_name));
         }
         return function;
     }

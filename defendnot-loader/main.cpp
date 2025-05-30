@@ -2,7 +2,7 @@
 #include "shared/ctx.hpp"
 #include "shared/defer.hpp"
 #include "shared/ipc.hpp"
-#include "shared/names.hpp"
+#include "shared/strings.hpp"
 #include <argparse/argparse.hpp>
 
 #include <format>
@@ -38,12 +38,12 @@ namespace {
         std::println("** loading defendnot");
 
         auto dll_path = shared::get_this_module_path().parent_path();
-        dll_path /= names::kDllName;
+        dll_path /= strings::kDllName;
         if (!std::filesystem::exists(dll_path)) {
-            throw std::runtime_error(std::format("{} does not exist!", names::kDllName));
+            throw std::runtime_error(std::format("{} does not exist!", strings::kDllName));
         }
 
-        return loader::inject(dll_path.string(), names::kVictimProcess);
+        return loader::inject(dll_path.string(), strings::kVictimProcess);
     }
 
     void wait_for_finish(shared::InterProcessCommunication& ipc) {
@@ -65,8 +65,8 @@ namespace {
 
     void banner(const loader::Config& config) {
         std::println();
-        std::println("thanks for using {}", names::kProjectName);
-        std::println("please don't forget to leave a star at {}", names::kRepoUrl);
+        std::println("thanks for using {}", strings::kProjectName);
+        std::println("please don't forget to leave a star at {}", strings::kRepoUrl);
 
         if (!config.from_autorun && config.alloc_console) {
             system("pause");
@@ -75,7 +75,7 @@ namespace {
 } // namespace
 
 int main(int argc, char* argv[]) try {
-    argparse::ArgumentParser program(std::format("{}-loader", names::kProjectName), names::kVersion.data(), argparse::default_arguments::none);
+    argparse::ArgumentParser program(std::format("{}-loader", strings::kProjectName), strings::kVersion.data(), argparse::default_arguments::none);
 
     const auto fatal_print = [](const std::string_view str) -> void {
         shared::alloc_console();
@@ -94,11 +94,11 @@ int main(int argc, char* argv[]) try {
         .help("shows version and exits")
         .default_value(false)
         .implicit_value(true)
-        .action([&fatal_print](const auto& /*unused*/) -> void { fatal_print(std::format("{}-loader v{}", names::kProjectName, names::kVersion)); });
+        .action([&fatal_print](const auto& /*unused*/) -> void { fatal_print(std::format("{}-loader v{}", strings::kProjectName, strings::kVersion)); });
 
     /// defendnot-loader parameters:
-    program.add_argument("-n", "--name").help("av display name").default_value(std::string(names::kDefaultAVName)).nargs(1);
-    program.add_argument("-d", "--disable").help(std::format("disable {}", names::kProjectName)).default_value(false).implicit_value(true);
+    program.add_argument("-n", "--name").help("av display name").default_value(std::string(strings::kDefaultAVName)).nargs(1);
+    program.add_argument("-d", "--disable").help(std::format("disable {}", strings::kProjectName)).default_value(false).implicit_value(true);
     program.add_argument("-v", "--verbose").help("verbose logging").default_value(false).implicit_value(true);
     program.add_argument("--silent").help("do not allocate console").default_value(false).implicit_value(true);
     program.add_argument("--autorun-as-user").help("create autorun task as currently logged in user").default_value(false).implicit_value(true);
@@ -132,6 +132,8 @@ int main(int argc, char* argv[]) try {
     }
 
     setup_window(config);
+    loader::ensure_environment();
+
     setup_context(config);
 
     /// \todo @es3n1n: move this to a separate function and add move ctor for ipc
@@ -150,6 +152,7 @@ int main(int argc, char* argv[]) try {
 
     return EXIT_SUCCESS;
 } catch (std::exception& err) {
+    shared::alloc_console();
     std::println(stderr, "** fatal error: {}", err.what());
     system("pause");
     return EXIT_FAILURE;

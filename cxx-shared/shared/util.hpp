@@ -27,4 +27,10 @@ namespace shared {
             freopen_s(reinterpret_cast<FILE**>(stderr), "CONOUT$", "w", stderr);
         });
     }
+
+    inline bool is_winserver() {
+        OSVERSIONINFOEXW osvi = {sizeof(osvi), 0, 0, 0, 0, {0}, 0, 0, 0, VER_NT_WORKSTATION};
+        const auto cond_mask = VerSetConditionMask(0, VER_PRODUCT_TYPE, VER_EQUAL);
+        return !VerifyVersionInfoW(&osvi, VER_PRODUCT_TYPE, cond_mask);
+    }
 } // namespace shared
