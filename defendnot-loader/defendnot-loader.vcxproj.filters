@@ -24,9 +24,15 @@
     <ClCompile Include="core\autorun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core\ensure_environment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\core.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util\scm.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

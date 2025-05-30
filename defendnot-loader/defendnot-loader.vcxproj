@@ -250,11 +250,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\autorun.cpp" />
+    <ClCompile Include="core\ensure_environment.cpp" />
     <ClCompile Include="core\inject.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\core.hpp" />
+    <ClInclude Include="util\scm.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

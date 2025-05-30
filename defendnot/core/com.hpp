@@ -5,6 +5,7 @@
 #include <thread>
 
 #include "core/log.hpp"
+#include "shared/strings.hpp"
 
 #include <Windows.h>
 
@@ -53,6 +54,7 @@ namespace defendnot {
 
         if (delayed) {
             /// Sleep for additional 15 seconds to let WSC proceed all previous requests
+            /// \todo @es3n1n: there should be a better way to handle this
             std::this_thread::sleep_for(std::chrono::seconds(15));
         }
 
@@ -94,9 +96,7 @@ namespace defendnot {
             IWscAVStatus* result = nullptr;
             const auto status = CoCreateInstance(detail::CLSID_IWscAVStatus, 0, 1, detail::IID_IWscAVStatus, reinterpret_cast<LPVOID*>(&result));
             if (status == REGDB_E_CLASSNOTREG) {
-                throw std::runtime_error("Windows Security Center (WSC) is not available on this machine.\n"
-                                         "This typically occurs on Windows Server operating systems, which are not supported by this tool.\n"
-                                         "For more details, please refer to: https://github.com/es3n1n/defendnot/issues/17");
+                throw std::runtime_error(strings::wsc_unavailable_error().data());
             }
 
             com_checked(status);
