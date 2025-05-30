@@ -127,6 +127,12 @@ int main(int argc, char* argv[]) try {
         .enable_autorun = !program.get<bool>("--disable-autorun"),
     };
 
+    /// When running from autorun, we'll be missing all the cli arguments, so lets load some relevant ones
+    if (config.from_autorun) {
+        shared::ctx.deserialize();
+        config.verbose = shared::ctx.verbose;
+    }
+
     if (!config.alloc_console && config.verbose) {
         fatal_print("--silent flag can not be used in combination with --verbose");
     }
@@ -147,7 +153,12 @@ int main(int argc, char* argv[]) try {
     };
 
     wait_for_finish(ipc);
-    process_autorun(config);
+
+    /// Only create autorun task when not running from autorun, no need to recreate it because we're missing some config vars
+    if (!config.from_autorun) {
+        process_autorun(config);
+    }
+
     banner(config);
 
     return EXIT_SUCCESS;

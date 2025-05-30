@@ -33,8 +33,8 @@ namespace scm {
         ~Service() = default;
 
     public:
-        bool query_status() noexcept {
-            if (status_process_.has_value()) {
+        bool query_status(bool force = false) noexcept {
+            if (!force && status_process_.has_value()) {
                 return true;
             }
 
@@ -73,6 +73,12 @@ namespace scm {
             }
         }
 
+        bool start() noexcept {
+            return StartServiceW(handle_.get(), 0, nullptr) || //
+                   GetLastError() == ERROR_SERVICE_ALREADY_RUNNING;
+        }
+
+    public:
         [[nodiscard]] bool valid() const noexcept {
             return handle_.get() != nullptr;
         }
@@ -87,15 +93,16 @@ namespace scm {
     };
 
     class Manager {
-        constexpr static auto kDesiredPermissions = GENERIC_READ;
+        constexpr static auto kDesiredAccess = GENERIC_READ;
+        constexpr static auto kServiceDesiredAccess = SERVICE_QUERY_STATUS | SERVICE_START;
 
     public:
-        Manager(): handle_(make_sc_handle(OpenSCManagerW(nullptr, nullptr, kDesiredPermissions))) { };
+        Manager(): handle_(make_sc_handle(OpenSCManagerW(nullptr, nullptr, kDesiredAccess))) { };
         ~Manager() = default;
 
     public:
         [[nodiscard]] Service get_service(const std::wstring_view service_name) noexcept {
-            return Service(OpenServiceW(handle_.get(), service_name.data(), kDesiredPermissions));
+            return Service(OpenServiceW(handle_.get(), service_name.data(), kServiceDesiredAccess));
         }
 
     public:
