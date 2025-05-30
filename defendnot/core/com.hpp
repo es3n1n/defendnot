@@ -26,7 +26,7 @@ namespace defendnot {
         NOT_SET = 0,
         NO_ACTION = 1,
         ACTION_RECOMMENDED = 2,
-        ACTION_NEEDED = 3
+        ACTION_NEEDED = 3,
     };
 
     inline HRESULT com_checked(HRESULT result, const std::source_location loc = std::source_location::current()) {
@@ -68,7 +68,7 @@ namespace defendnot {
         virtual std::uint32_t Release() = 0;
         virtual HRESULT Register(BSTR path_to_signed_product_exe, BSTR display_name, std::uint32_t, std::uint32_t) = 0;
         virtual HRESULT Unregister() = 0;
-        virtual HRESULT UpdateStatus(WSCSecurityProductState state, std::uint32_t) = 0;
+        virtual HRESULT UpdateStatus(WSCSecurityProductState state, WSCSecurityProductState state2) = 0;
         virtual HRESULT InitiateOfflineCleaning(std::uint16_t*, std::uint16_t*) = 0;
         virtual HRESULT NotifyUserForNearExpiration(std::uint32_t) = 0;
         virtual HRESULT MakeDefaultProductRequest() = 0;
@@ -78,7 +78,7 @@ namespace defendnot {
         virtual HRESULT UpdateProtectionUpdateSubstatus(WSCSecurityProductSubStatus status) = 0;
         virtual HRESULT RegisterAV(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
         virtual HRESULT UnregisterAV() = 0;
-        virtual HRESULT UpdateStatusAV(WSCSecurityProductState state, std::uint32_t) = 0;
+        virtual HRESULT UpdateStatusAV(WSCSecurityProductState state, WSCSecurityProductState state2) = 0;
         virtual HRESULT InitiateOfflineCleaningAV(std::uint16_t*, std::uint16_t*) = 0;
         virtual HRESULT NotifyUserForNearExpirationAV(std::uint32_t) = 0;
         virtual HRESULT RegisterFW(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
@@ -86,7 +86,7 @@ namespace defendnot {
         virtual HRESULT UpdateStatusFW(WSCSecurityProductState state) = 0;
         virtual HRESULT RegisterAS(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
         virtual HRESULT UnregisterAS() = 0;
-        virtual HRESULT UpdateStatusAS(WSCSecurityProductState state, std::uint32_t) = 0;
+        virtual HRESULT UpdateStatusAS(WSCSecurityProductState state, WSCSecurityProductState state2) = 0;
 
     private:
         virtual void dtor() = 0;

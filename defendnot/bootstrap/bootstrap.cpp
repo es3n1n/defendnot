@@ -35,6 +35,11 @@ namespace defendnot {
 
         /// Register and activate our AV
         logln("register: {:#x}", com_checked(inst->Register(name, name, 0, 0)));
-        logln("update: {:#x}", com_checked(inst->UpdateStatus(WSCSecurityProductState::ON, 3)));
+        logln("update: {:#x}", com_checked(inst->UpdateStatus(WSCSecurityProductState::ON, WSCSecurityProductState::ON)));
+        logln("scan_update: {:#x}", com_checked(inst->UpdateScanSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
+        logln("settings_update: {:#x}", com_checked(inst->UpdateSettingsSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
+
+        /// \fixme @es3n1n: this seems to be giving no effect whatsoever.
+        logln("prot_update: {:#x}", com_checked(inst->UpdateProtectionUpdateSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
     }
 } // namespace defendnot
