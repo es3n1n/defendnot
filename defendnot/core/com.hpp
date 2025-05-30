@@ -92,7 +92,14 @@ namespace defendnot {
     public:
         static IWscAVStatus* get() {
             IWscAVStatus* result = nullptr;
-            com_checked(CoCreateInstance(detail::CLSID_IWscAVStatus, 0, 1, detail::IID_IWscAVStatus, reinterpret_cast<LPVOID*>(&result)));
+            const auto status = CoCreateInstance(detail::CLSID_IWscAVStatus, 0, 1, detail::IID_IWscAVStatus, reinterpret_cast<LPVOID*>(&result));
+            if (status == REGDB_E_CLASSNOTREG) {
+                throw std::runtime_error("Windows Security Center (WSC) is not available on this machine.\n"
+                                         "This typically occurs on Windows Server operating systems, which are not supported by this tool.\n"
+                                         "For more details, please refer to: https://github.com/es3n1n/defendnot/issues/17");
+            }
+
+            com_checked(status);
             return result;
         }
     };
