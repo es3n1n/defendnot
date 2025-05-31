@@ -7,19 +7,35 @@
 #include <Windows.h>
 
 namespace defendnot {
+    namespace {
+        template <com::ComObject Ty>
+        void apply(const std::string_view log_prefix, const BSTR name) {
+            /// Get the WSC interface
+            auto inst = com::query<Ty>();
+
+            /// This can fail if we dont have any products registered so no com_checked
+            logln("{}_unregister: {:#x}", log_prefix, com::retry_while_pending([&inst]() -> HRESULT { return inst->Unregister(); }) & 0xFFFFFFFF);
+            if (shared::ctx.state == shared::State::OFF) {
+                return;
+            }
+
+            /// Register and activate
+            logln("{}_register: {:#x}", log_prefix, com::checked(inst->Register(name, name, 0, 0)));
+            logln("{}_update: {:#x}", log_prefix, com::checked(inst->UpdateStatus(WSCSecurityProductState::ON, static_cast<BOOL>(true))));
+
+            /// Update the substatuses, if the interface supports this
+            if constexpr (std::is_same_v<Ty, IWscAVStatus4>) {
+                logln("{}_scan_update: {:#x}", log_prefix, com::checked(inst->UpdateScanSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
+                logln("{}_settings_update: {:#x}", log_prefix, com::checked(inst->UpdateSettingsSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
+                logln("{}_prot_update: {:#x}", log_prefix, com::checked(inst->UpdateProtectionUpdateSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
+            }
+        }
+    } // namespace
+
     void startup() {
         /// Setup
         shared::ctx.deserialize();
         logln("init: {:#x}", com::checked(CoInitialize(nullptr)));
-
-        /// Get the main WSC interface we will be dealing with
-        auto inst = com::query<IWscAVStatus4>();
-
-        /// This can fail if we dont have any avs registered so no com_checked
-        logln("unregister: {:#x}", com::retry_while_pending([&inst]() -> HRESULT { return inst->Unregister(); }) & 0xFFFFFFFF);
-        if (shared::ctx.state == shared::State::OFF) {
-            return;
-        }
 
         /// WSC will reject the register request if name is empty
         auto name_w = std::wstring(shared::ctx.name.begin(), shared::ctx.name.end());
@@ -33,11 +49,8 @@ namespace defendnot {
             SysFreeString(name);
         };
 
-        /// Register and activate our AV
-        logln("register: {:#x}", com::checked(inst->Register(name, name, 0, 0)));
-        logln("update: {:#x}", com::checked(inst->UpdateStatus(WSCSecurityProductState::ON, WSCSecurityProductState::ON)));
-        logln("scan_update: {:#x}", com::checked(inst->UpdateScanSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
-        logln("settings_update: {:#x}", com::checked(inst->UpdateSettingsSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
-        logln("prot_update: {:#x}", com::checked(inst->UpdateProtectionUpdateSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
+        /// Register our stuff in the WSC interfaces
+        apply<IWscASStatus>("IWscASStatus", name);
+        apply<IWscAVStatus4>("IWscAVStatus4", name);
     }
 } // namespace defendnot
