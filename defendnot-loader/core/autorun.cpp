@@ -1,5 +1,6 @@
 #include "core/core.hpp"
 
+#include "shared/com.hpp"
 #include "shared/ctx.hpp"
 #include "shared/strings.hpp"
 
@@ -19,38 +20,6 @@ namespace loader {
     namespace {
         constexpr std::string_view kTaskName = strings::kProjectName;
 
-        /// A very basic implementation, a lot of stuff is missing
-        template <typename Ty>
-        class ComPtr {
-        public:
-            ComPtr() = default;
-            explicit ComPtr(Ty* ptr): ptr_(ptr) { }
-
-            ~ComPtr() {
-                if (ptr_ != nullptr) {
-                    ptr_->Release();
-                }
-            }
-
-            ComPtr(const ComPtr&) = delete;
-            ComPtr& operator=(const ComPtr&) = delete;
-
-            [[nodiscard]] Ty* get() const {
-                return ptr_;
-            }
-
-            [[nodiscard]] Ty* operator->() const {
-                return ptr_;
-            }
-
-            [[nodiscard]] Ty** ref_to_ptr() {
-                return &ptr_;
-            }
-
-        private:
-            Ty* ptr_ = nullptr;
-        };
-
         void co_initialize() {
             static std::once_flag fl;
             std::call_once(fl, []() -> void {
@@ -66,7 +35,7 @@ namespace loader {
         [[nodiscard]] bool with_service(Callable&& callback) {
             co_initialize();
 
-            ComPtr<ITaskService> service;
+            com::Ptr<ITaskService> service;
             auto hr =
                 CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService, reinterpret_cast<void**>(service.ref_to_ptr()));
             if (FAILED(hr)) {
@@ -78,7 +47,7 @@ namespace loader {
                 return false;
             }
 
-            ComPtr<ITaskFolder> root_folder;
+            com::Ptr<ITaskFolder> root_folder;
             hr = service->GetFolder(BSTR(L"\\"), root_folder.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
@@ -104,55 +73,55 @@ namespace loader {
                 user_id = bstr_sys;
             }
 
-            ComPtr<ITaskDefinition> task;
+            com::Ptr<ITaskDefinition> task;
             auto hr = service->NewTask(0, task.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
             }
 
-            ComPtr<IRegistrationInfo> reg_info;
+            com::Ptr<IRegistrationInfo> reg_info;
             hr = task->get_RegistrationInfo(reg_info.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
             }
 
-            ComPtr<IPrincipal> principal;
+            com::Ptr<IPrincipal> principal;
             hr = task->get_Principal(principal.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
             }
 
-            ComPtr<ITriggerCollection> trigger_collection;
+            com::Ptr<ITriggerCollection> trigger_collection;
             hr = task->get_Triggers(trigger_collection.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
             }
 
-            ComPtr<ITrigger> trigger;
+            com::Ptr<ITrigger> trigger;
             hr = trigger_collection->Create(task_trigger, trigger.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
             }
 
-            ComPtr<IActionCollection> action_collection;
+            com::Ptr<IActionCollection> action_collection;
             hr = task->get_Actions(action_collection.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
             }
 
-            ComPtr<IAction> action;
+            com::Ptr<IAction> action;
             hr = action_collection->Create(TASK_ACTION_EXEC, action.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
             }
 
-            ComPtr<IExecAction> exec_action;
+            com::Ptr<IExecAction> exec_action;
             hr = action->QueryInterface(IID_IExecAction, reinterpret_cast<void**>(exec_action.ref_to_ptr()));
             if (FAILED(hr)) {
                 return false;
             }
 
-            ComPtr<ITaskSettings> settings;
+            com::Ptr<ITaskSettings> settings;
             hr = task->get_Settings(settings.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
@@ -175,7 +144,7 @@ namespace loader {
             exec_action->put_Arguments(bstr_t("--from-autorun"));
 
             /// Register the task and we are done
-            ComPtr<IRegisteredTask> registered_task;
+            com::Ptr<IRegisteredTask> registered_task;
             hr = folder->RegisterTaskDefinition(bstr_t(kTaskName.data()), task.get(), TASK_CREATE_OR_UPDATE, VARIANT{}, VARIANT{}, TASK_LOGON_NONE,
                                                 variant_t(L""), registered_task.ref_to_ptr());
             return SUCCEEDED(hr);

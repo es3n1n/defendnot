@@ -10,13 +10,13 @@ namespace defendnot {
     void startup() {
         /// Setup
         shared::ctx.deserialize();
-        logln("init: {:#x}", com_checked(CoInitialize(nullptr)));
+        logln("init: {:#x}", com::checked(CoInitialize(nullptr)));
 
         /// Get the main WSC interface we will be dealing with
-        auto inst = IWscAVStatus::get();
+        auto inst = com::query<IWscAVStatus4>();
 
         /// This can fail if we dont have any avs registered so no com_checked
-        logln("unregister: {:#x}", com_retry_while_pending([&inst]() -> HRESULT { return inst->Unregister(); }) & 0xFFFFFFFF);
+        logln("unregister: {:#x}", com::retry_while_pending([&inst]() -> HRESULT { return inst->Unregister(); }) & 0xFFFFFFFF);
         if (shared::ctx.state == shared::State::OFF) {
             return;
         }
@@ -34,12 +34,10 @@ namespace defendnot {
         };
 
         /// Register and activate our AV
-        logln("register: {:#x}", com_checked(inst->Register(name, name, 0, 0)));
-        logln("update: {:#x}", com_checked(inst->UpdateStatus(WSCSecurityProductState::ON, WSCSecurityProductState::ON)));
-        logln("scan_update: {:#x}", com_checked(inst->UpdateScanSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
-        logln("settings_update: {:#x}", com_checked(inst->UpdateSettingsSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
-
-        /// \fixme @es3n1n: this seems to be giving no effect whatsoever.
-        logln("prot_update: {:#x}", com_checked(inst->UpdateProtectionUpdateSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
+        logln("register: {:#x}", com::checked(inst->Register(name, name, 0, 0)));
+        logln("update: {:#x}", com::checked(inst->UpdateStatus(WSCSecurityProductState::ON, WSCSecurityProductState::ON)));
+        logln("scan_update: {:#x}", com::checked(inst->UpdateScanSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
+        logln("settings_update: {:#x}", com::checked(inst->UpdateSettingsSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
+        logln("prot_update: {:#x}", com::checked(inst->UpdateProtectionUpdateSubstatus(WSCSecurityProductSubStatus::NO_ACTION)));
     }
 } // namespace defendnot

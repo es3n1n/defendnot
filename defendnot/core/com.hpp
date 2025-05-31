@@ -5,14 +5,23 @@
 #include <thread>
 
 #include "core/log.hpp"
+#include "shared/com.hpp"
 #include "shared/strings.hpp"
 
 #include <Windows.h>
 
 namespace defendnot {
     namespace detail {
-        inline GUID CLSID_IWscAVStatus = {0x0F2102C37, 0x90C3, 0x450C, {0x0B3, 0x0F6, 0x92, 0x0BE, 0x16, 0x93, 0x0BD, 0x0F2}};
-        inline GUID IID_IWscAVStatus = {0x3901A765, 0x0AB91, 0x4BA9, {0xA5, 0x53, 0x5B, 0x85, 0x38, 0xDE, 0xB8, 0x40}};
+        constexpr GUID CLSID_WscIsv = {0xF2102C37, 0x90C3, 0x450C, {0xB3, 0x0F6, 0x92, 0xBE, 0x16, 0x93, 0xBD, 0xF2}};
+
+        constexpr GUID IID_IWscFWStatus = {0x9B8F6C6E, 0x8A4A, 0x4891, {0xAF, 0x63, 0x1A, 0x2F, 0x50, 0x92, 0x40, 0x40}};
+        constexpr GUID IID_IWscFWStatus2 = {0x62F698CB, 0x94A, 0x4C68, {0x94, 0x19, 0x8E, 0x8C, 0x49, 0x42, 0x0E, 0x59}};
+
+        constexpr GUID IID_IWscAVStatus = {0x3901A765, 0xAB91, 0x4BA9, {0xA5, 0x53, 0x5B, 0x85, 0x38, 0xDE, 0xB8, 0x40}};
+        constexpr GUID IID_IWscAVStatus3 = {0xCF007CA2, 0xF5E3, 0x11E5, {0x9C, 0xE9, 0x5E, 0x55, 0x17, 0x50, 0x7C, 0x66}};
+        constexpr GUID IID_IWscAVStatus4 = {0x4DCBAFAC, 0x29BA, 0x46B1, {0x80, 0xFC, 0xB8, 0xBD, 0xE3, 0xC0, 0xAE, 0x4D}};
+
+        constexpr GUID IID_IWscASStatus = {0x24E9756, 0xBA6C, 0x4AD1, {0x83, 0x21, 0x87, 0xBA, 0xE7, 0x8F, 0xD0, 0xE3}};
     } // namespace detail
 
     enum class WSCSecurityProductState : std::uint32_t {
@@ -29,43 +38,8 @@ namespace defendnot {
         ACTION_NEEDED = 3,
     };
 
-    inline HRESULT com_checked(HRESULT result, const std::source_location loc = std::source_location::current()) {
-        if (result == 0) {
-            return result;
-        }
-
-        auto msg = std::format("Got HRESULT={:#x} at\n{}:{}", static_cast<std::uint32_t>(result) & 0xFFFFFFFF, loc.function_name(), loc.line());
-        throw std::runtime_error(msg);
-    }
-
-    template <typename Callable>
-    inline HRESULT com_retry_while_pending(Callable&& fn) {
-        bool delayed = false;
-        HRESULT status = 0;
-        do {
-            if (status != 0) {
-                delayed = true;
-                logln("delaying for com retry...");
-                std::this_thread::sleep_for(std::chrono::seconds(5));
-            }
-
-            status = fn();
-        } while (status == E_PENDING);
-
-        if (delayed) {
-            /// Sleep for additional 15 seconds to let WSC proceed all previous requests
-            /// \todo @es3n1n: there should be a better way to handle this
-            std::this_thread::sleep_for(std::chrono::seconds(15));
-        }
-
-        return status;
-    }
-
-    class IWscAVStatus {
+    class IWscAVStatus4 : public com::IBaseObject<detail::CLSID_WscIsv, detail::IID_IWscAVStatus4> {
     public:
-        virtual HRESULT QueryInterface() = 0;
-        virtual std::uint32_t AddRef() = 0;
-        virtual std::uint32_t Release() = 0;
         virtual HRESULT Register(BSTR path_to_signed_product_exe, BSTR display_name, std::uint32_t, std::uint32_t) = 0;
         virtual HRESULT Unregister() = 0;
         virtual HRESULT UpdateStatus(WSCSecurityProductState state, WSCSecurityProductState state2) = 0;
@@ -87,20 +61,5 @@ namespace defendnot {
         virtual HRESULT RegisterAS(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
         virtual HRESULT UnregisterAS() = 0;
         virtual HRESULT UpdateStatusAS(WSCSecurityProductState state, WSCSecurityProductState state2) = 0;
-
-    private:
-        virtual void dtor() = 0;
-
-    public:
-        static IWscAVStatus* get() {
-            IWscAVStatus* result = nullptr;
-            const auto status = CoCreateInstance(detail::CLSID_IWscAVStatus, 0, 1, detail::IID_IWscAVStatus, reinterpret_cast<LPVOID*>(&result));
-            if (status == REGDB_E_CLASSNOTREG) {
-                throw std::runtime_error(strings::wsc_unavailable_error().data());
-            }
-
-            com_checked(status);
-            return result;
-        }
     };
 } // namespace defendnot
