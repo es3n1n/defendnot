@@ -5,7 +5,7 @@
 namespace strings {
     constexpr std::string_view kProjectName = "defendnot";
     constexpr std::string_view kRepoUrl = "https://github.com/es3n1n/defendnot";
-    constexpr std::string_view kVersion = "1.3.0";
+    constexpr std::string_view kVersion = "1.4.0";
 
     constexpr std::string_view kDefaultAVName = "dnot.sh";
 
