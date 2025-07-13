@@ -40,33 +40,33 @@ namespace defendnot {
 
     class IWscAVStatus4 : public com::IBaseObject<detail::CLSID_WscIsv, detail::IID_IWscAVStatus4> {
     public:
-        virtual HRESULT Register(BSTR path_to_signed_product_exe, BSTR display_name, std::uint32_t, std::uint32_t) = 0;
-        virtual HRESULT Unregister() = 0;
-        virtual HRESULT UpdateStatus(WSCSecurityProductState state, BOOL unk) = 0;
-        virtual HRESULT InitiateOfflineCleaning(std::uint16_t*, std::uint16_t*) = 0;
-        virtual HRESULT NotifyUserForNearExpiration(std::uint32_t) = 0;
-        virtual HRESULT MakeDefaultProductRequest() = 0;
-        virtual HRESULT IsDefaultProductEnforced(std::uint32_t* result) = 0;
-        virtual HRESULT UpdateScanSubstatus(WSCSecurityProductSubStatus status) = 0;
-        virtual HRESULT UpdateSettingsSubstatus(WSCSecurityProductSubStatus status) = 0;
-        virtual HRESULT UpdateProtectionUpdateSubstatus(WSCSecurityProductSubStatus status) = 0;
-        virtual HRESULT RegisterAV(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
-        virtual HRESULT UnregisterAV() = 0;
-        virtual HRESULT UpdateStatusAV(WSCSecurityProductState state, BOOL unk) = 0;
-        virtual HRESULT InitiateOfflineCleaningAV(std::uint16_t*, std::uint16_t*) = 0;
-        virtual HRESULT NotifyUserForNearExpirationAV(std::uint32_t) = 0;
-        virtual HRESULT RegisterFW(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
-        virtual HRESULT UnregisterFW() = 0;
-        virtual HRESULT UpdateStatusFW(WSCSecurityProductState state) = 0;
-        virtual HRESULT RegisterAS(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
-        virtual HRESULT UnregisterAS() = 0;
-        virtual HRESULT UpdateStatusAS(WSCSecurityProductState state, BOOL unk) = 0;
+        virtual HRESULT COM_CALLCONV Register(BSTR path_to_signed_product_exe, BSTR display_name, std::uint32_t, std::uint32_t) = 0;
+        virtual HRESULT COM_CALLCONV Unregister() = 0;
+        virtual HRESULT COM_CALLCONV UpdateStatus(WSCSecurityProductState state, BOOL unk) = 0;
+        virtual HRESULT COM_CALLCONV InitiateOfflineCleaning(std::uint16_t*, std::uint16_t*) = 0;
+        virtual HRESULT COM_CALLCONV NotifyUserForNearExpiration(std::uint32_t) = 0;
+        virtual HRESULT COM_CALLCONV MakeDefaultProductRequest() = 0;
+        virtual HRESULT COM_CALLCONV IsDefaultProductEnforced(std::uint32_t* result) = 0;
+        virtual HRESULT COM_CALLCONV UpdateScanSubstatus(WSCSecurityProductSubStatus status) = 0;
+        virtual HRESULT COM_CALLCONV UpdateSettingsSubstatus(WSCSecurityProductSubStatus status) = 0;
+        virtual HRESULT COM_CALLCONV UpdateProtectionUpdateSubstatus(WSCSecurityProductSubStatus status) = 0;
+        virtual HRESULT COM_CALLCONV RegisterAV(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
+        virtual HRESULT COM_CALLCONV UnregisterAV() = 0;
+        virtual HRESULT COM_CALLCONV UpdateStatusAV(WSCSecurityProductState state, BOOL unk) = 0;
+        virtual HRESULT COM_CALLCONV InitiateOfflineCleaningAV(std::uint16_t*, std::uint16_t*) = 0;
+        virtual HRESULT COM_CALLCONV NotifyUserForNearExpirationAV(std::uint32_t) = 0;
+        virtual HRESULT COM_CALLCONV RegisterFW(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
+        virtual HRESULT COM_CALLCONV UnregisterFW() = 0;
+        virtual HRESULT COM_CALLCONV UpdateStatusFW(WSCSecurityProductState state) = 0;
+        virtual HRESULT COM_CALLCONV RegisterAS(std::uint16_t*, std::uint16_t*, std::uint32_t, std::uint32_t) = 0;
+        virtual HRESULT COM_CALLCONV UnregisterAS() = 0;
+        virtual HRESULT COM_CALLCONV UpdateStatusAS(WSCSecurityProductState state, BOOL unk) = 0;
     };
 
     class IWscASStatus : public com::IBaseObject<detail::CLSID_WscIsv, detail::IID_IWscASStatus> {
     public:
-        virtual HRESULT Register(BSTR path_to_signed_product_exe, BSTR display_name, std::uint32_t, std::uint32_t) = 0;
-        virtual HRESULT Unregister() = 0;
-        virtual HRESULT UpdateStatus(WSCSecurityProductState state, BOOL unk) = 0;
+        virtual HRESULT COM_CALLCONV Register(BSTR path_to_signed_product_exe, BSTR display_name, std::uint32_t, std::uint32_t) = 0;
+        virtual HRESULT COM_CALLCONV Unregister() = 0;
+        virtual HRESULT COM_CALLCONV UpdateStatus(WSCSecurityProductState state, BOOL unk) = 0;
     };
 } // namespace defendnot
