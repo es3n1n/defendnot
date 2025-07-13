@@ -9,6 +9,8 @@
 #include <source_location>
 #include <stdexcept>
 
+#define COM_CALLCONV __stdcall
+
 namespace com {
     inline HRESULT checked(HRESULT result, const std::source_location loc = std::source_location::current()) {
         if (result == 0) {
@@ -94,11 +96,11 @@ namespace com {
         static constexpr GUID kIID = IID;
 
     private:
-        virtual HRESULT QueryInterface() = 0;
-        virtual std::uint32_t AddRef() = 0;
+        virtual HRESULT COM_CALLCONV QueryInterface() = 0;
+        virtual std::uint32_t COM_CALLCONV AddRef() = 0;
 
     public:
-        virtual std::uint32_t Release() = 0;
+        virtual std::uint32_t COM_CALLCONV Release() = 0;
     };
 
     template <typename Ty>
