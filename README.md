@@ -41,6 +41,13 @@ irm https://dnot.sh/ | iex
 > [!NOTE]
 > You can also directly use the 'longer' version of installer script url, which is `https://raw.githubusercontent.com/es3n1n/defendnot/refs/heads/master/install.ps1`
 
+### Scoop
+
+```powershell
+scoop bucket add extra
+scoop install defendnot-launcher
+```
+
 ### Manual
 
 Download the [latest](https://github.com/es3n1n/defendnot/releases/latest) release, extract it somewhere and launch `defendnot-loader`.
