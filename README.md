@@ -1,10 +1,8 @@
 # defendnot
 
+<img src="https://i.imgur.com/F9gWA92.png" align="right" width="50%"/>
+
 An even funnier way to disable windows defender.
-
-Defendnot is a successor of [no-defender](https://github.com/es3n1n/no-defender).
-
-![](https://i.imgur.com/F9gWA92.png)
 
 > [!CAUTION]
 > **Permitted Use Notice**: 
@@ -17,7 +15,7 @@ Defendnot is a successor of [no-defender](https://github.com/es3n1n/no-defender)
 
 ## Installation
 
-> [!TIP]
+> [!WARNING]
 > You may need to temporarily disable realtime and tamper protection before proceeding, otherwise defender will block `defendnot` binaries due to the `VirTool:Win64/Defnot.A` detection. 
 
 ### One-liner
@@ -33,19 +31,16 @@ irm https://dnot.sh/ | iex
 
 # Example 3: Without allocating console
 & ([ScriptBlock]::Create((irm https://dnot.sh/))) --silent
+
+# Example 4: Run once, without allocating console
+& ([ScriptBlock]::Create((irm https://dnot.sh/))) --silent --disable-autorun
 ```
-
-> [!NOTE]
-> As seen in examples 2 and 3, you can pass the commandline arguments to the installer script and it will forward them to `defendnot-loader`. For reference what commandline arguments are allowed, see the `Usage` section below.
-
-> [!NOTE]
-> You can also directly use the 'longer' version of installer script url, which is `https://raw.githubusercontent.com/es3n1n/defendnot/refs/heads/master/install.ps1`
 
 ### Scoop
 
 ```powershell
 scoop bucket add extra
-scoop install defendnot-launcher
+scoop install defendnot
 ```
 
 ### Manual
@@ -78,13 +73,13 @@ The initial implementation of [no-defender](https://github.com/es3n1n/no-defende
 ## Limitations
 
 - **Needs to stay on disk:**  
-  To keep the AV registration persistent after reboot, `defendnot` adds itself to autorun. That means the binaries have to remain on your system for the Defender "disable" to stick. (Yeah, I wish it were more elegant too.)
+  To keep the AV registration persistent after reboot, `defendnot` adds itself to autorun. That means the binaries have to remain on your system for the Defender "disable" to stick.
   
 - **No support for Windows Server:**  
-  The Windows Security Center (WSC) service doesn’t exist on Windows Server editions, so `defendnot` *won’t* work there. See [#17](https://github.com/es3n1n/defendnot/issues/17).
+  The Windows Security Center (WSC) service doesn't exist on Windows Server editions, so `defendnot` *won't* work there. See [#17](https://github.com/es3n1n/defendnot/issues/17).
 
 - **Defender Detection:**  
-  Not surprisingly, Windows Defender really doesn’t like `defendnot` and will flag or remove it as `VirTool:Win64/Defnot.A`. You’ll need to (temporarily) disable Defender’s real-time and tamper protection to install.
+  Windows Defender really doesn't like `defendnot` and will flag or remove it as `VirTool:Win64/Defnot.A`. You'll need to (temporarily) disable Defender's real-time and tamper protection to install.
 
 ## Legitimate Use Cases
 

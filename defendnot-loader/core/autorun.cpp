@@ -42,19 +42,19 @@ namespace loader {
                 return false;
             }
 
-            hr = service->Connect(VARIANT{}, VARIANT{}, VARIANT{}, VARIANT{});
+            hr = service->Connect(variant_t{}, variant_t{}, variant_t{}, variant_t{});
             if (FAILED(hr)) {
                 return false;
             }
 
             com::Ptr<ITaskFolder> root_folder;
-            hr = service->GetFolder(BSTR(L"\\"), root_folder.ref_to_ptr());
+            hr = service->GetFolder(bstr_t(L"\\"), root_folder.ref_to_ptr());
             if (FAILED(hr)) {
                 return false;
             }
 
             /// Cleanup our task, we will recreate it in the callback if needed
-            root_folder->DeleteTask(BSTR(kTaskName.data()), 0);
+            root_folder->DeleteTask(bstr_t(kTaskName.data()), 0);
             return callback(service.get(), root_folder.get());
         }
     } // namespace
