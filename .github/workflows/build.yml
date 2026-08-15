@@ -59,6 +59,7 @@ jobs:
         Copy-Item -Path ".\out\$mappedPlatform\defendnot.pdb" -Destination ".\artifacts\$platform\" -Verbose
         Copy-Item -Path ".\out\$mappedPlatform\defendnot-loader.exe" -Destination ".\artifacts\$platform\" -Verbose
         Copy-Item -Path ".\out\$mappedPlatform\defendnot-loader.pdb" -Destination ".\artifacts\$platform\" -Verbose
+        Copy-Item -Path ".\extra-strip.bat" -Destination ".\artifacts\$platform\" -Verbose
       shell: pwsh
 
     - name: Upload artifacts

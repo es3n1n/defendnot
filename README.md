@@ -65,10 +65,16 @@ Optional arguments:
   --disable-autorun  disable autorun task creation
 ```
 
+## Stripping Defender out further (optional)
+
+defendnot only registers a fake AV through WSC, but if you want to strip more Defender stuff out, run the optional `extra-strip.bat` as admin after defendnot is active. It disables a bunch more Defender policies in registry: real-time monitoring, behavior monitoring, cloud reporting, signature updates, etc.
+
+It's a separate script because the keys are finicky and undoing them on `--disable` would mean saving every value first somewhere and writing all of them back, which is _waaay_ more bookkeeping than I feel like implementing.
+
 ## Limitations
 
 - **Needs to stay on disk:**  
-  To keep the AV registration persistent after reboot, defendnot adds itself to autorun. That means the binaries have to remain on your system.
+  To keep the AV registration after reboot, defendnot adds itself to autorun.
 
 ## Writeup
 
