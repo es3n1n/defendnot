@@ -51,7 +51,7 @@ Optional arguments:
   -n, --name         av display name [default: "dnot.sh"]
   -d, --disable      disable defendnot
   -v, --verbose      verbose logging
-  --firewall         also register a fake firewall to silence the firewall warning
+  --firewall         also register a fake firewall
   --silent           do not allocate console
   --autorun-as-user  create autorun task as currently logged in user
   --disable-autorun  disable autorun task creation

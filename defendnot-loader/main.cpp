@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) try {
     program.add_argument("-n", "--name").help("av display name").default_value(std::string(strings::kDefaultAVName)).nargs(1);
     program.add_argument("-d", "--disable").help(std::format("disable {}", strings::kProjectName)).default_value(false).implicit_value(true);
     program.add_argument("-v", "--verbose").help("verbose logging").default_value(false).implicit_value(true);
-    program.add_argument("--firewall").help("also register a fake firewall to silence the firewall warning").default_value(false).implicit_value(true);
+    program.add_argument("--firewall").help("also register a fake firewall").default_value(false).implicit_value(true);
     program.add_argument("--silent").help("do not allocate console").default_value(false).implicit_value(true);
     program.add_argument("--autorun-as-user").help("create autorun task as currently logged in user").default_value(false).implicit_value(true);
     program.add_argument("--disable-autorun").help("disable autorun task creation").default_value(false).implicit_value(true);
