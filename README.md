@@ -44,6 +44,13 @@ irm https://dnot.sh/ | iex
 & ([ScriptBlock]::Create((irm https://dnot.sh/))) --disable
 ```
 
+### Scoop
+
+```powershell
+scoop bucket add extra
+scoop install defendnot
+```
+
 ### Manual
 
 Download the [latest](https://github.com/es3n1n/defendnot/releases/latest) release, extract it somewhere and launch `defendnot-loader`.
