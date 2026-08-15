@@ -7,16 +7,21 @@ An even funnier way to disable windows defender.
 > [!CAUTION]
 > **Permitted Use Notice**: 
 > 
-> Using this tool to facilitate malware distribution, cybercrime, unauthorized access, evading detection, or any illegal activity is strictly prohibited.
+> Using this tool to facilitate malware distribution, or any illegal activity is strictly prohibited.
 > 
-> Users assume all legal responsibility for how they use this tool and any consequences thereof. You must comply with all applicable local, state, federal, and international laws when using this tool.
+> Users assume all legal responsibility for how they use this tool and any consequences thereof. You must comply with all applicable laws when using this tool.
 > 
-> By downloading, installing, or using this tool, you acknowledge that you have read, understood, and agree to these terms.
+> By downloading, installing, or using this tool, you acknowledge that you agree to these terms.
 
 ## Installation
 
 > [!WARNING]
-> You may need to temporarily disable realtime and tamper protection before proceeding, otherwise defender will block `defendnot` binaries due to the `VirTool:Win64/Defnot.A` detection. 
+> You may need to temporarily disable realtime and tamper protection before proceeding, otherwise defender will block defendnot binaries from running.
+>
+> On newer Windows 11 builds you may also have to turn off Smart App Control.
+>
+> - Real-time protection: `windowsdefender://threatsettings/`
+> - Smart App Control: `windowsdefender://appbrowser/`
 
 ### One-liner
 
@@ -26,14 +31,17 @@ Open the powershell as administrator and execute any of these:
 # Example 1: Basic installation
 irm https://dnot.sh/ | iex
 
-# Example 2: With custom AV name
-& ([ScriptBlock]::Create((irm https://dnot.sh/))) --name "Custom AV name"
+# Example 2: With custom AV name and firewall
+& ([ScriptBlock]::Create((irm https://dnot.sh/))) --name "Custom AV name" --firewall
 
 # Example 3: Without allocating console
 & ([ScriptBlock]::Create((irm https://dnot.sh/))) --silent
 
 # Example 4: Run once, without allocating console
 & ([ScriptBlock]::Create((irm https://dnot.sh/))) --silent --disable-autorun
+
+# Example 5: Uninstall
+& ([ScriptBlock]::Create((irm https://dnot.sh/))) --disable
 ```
 
 ### Manual
@@ -57,33 +65,10 @@ Optional arguments:
   --disable-autorun  disable autorun task creation
 ```
 
-## How it works
-
-There's a WSC (Windows Security Center) service in Windows which is used by antiviruses to let Windows know that there's some other antivirus in the hood and it should disable Windows Defender.  
-This WSC API is undocumented and furthermore requires people to sign an NDA with Microsoft to get its documentation.
-
-The initial implementation of [no-defender](https://github.com/es3n1n/no-defender) used thirdparty code provided by other AVs to register itself in the WSC, while `defendnot` interacts with WSC directly.
-
 ## Limitations
 
 - **Needs to stay on disk:**  
-  To keep the AV registration persistent after reboot, `defendnot` adds itself to autorun. That means the binaries have to remain on your system for the Defender "disable" to stick.
-  
-- **No support for Windows Server:**  
-  The Windows Security Center (WSC) service doesn't exist on Windows Server editions, so `defendnot` *won't* work there. See [#17](https://github.com/es3n1n/defendnot/issues/17).
-
-- **Defender Detection:**  
-  Windows Defender really doesn't like `defendnot` and will flag or remove it as `VirTool:Win64/Defnot.A`. You'll need to (temporarily) disable Defender's real-time and tamper protection to install.
-
-## Legitimate Use Cases
-
-- Reducing resource consumption in development environments
-- Testing system performance under different security configurations
-- Educational research on Windows security mechanisms
-- Home lab experimentation and learning
-
-> [!IMPORTANT]
-> If your intended usage falls outside these legitimate use cases, support in issues/DMs might be denied without any further explanations.
+  To keep the AV registration persistent after reboot, defendnot adds itself to autorun. That means the binaries have to remain on your system.
 
 ## Writeup
 
