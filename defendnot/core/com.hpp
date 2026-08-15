@@ -69,4 +69,14 @@ namespace defendnot {
         virtual HRESULT COM_CALLCONV Unregister() = 0;
         virtual HRESULT COM_CALLCONV UpdateStatus(WSCSecurityProductState state, BOOL unk) = 0;
     };
+
+    class IWscFWStatus2 : public com::IBaseObject<detail::CLSID_WscIsv, detail::IID_IWscFWStatus2> {
+    public:
+        virtual HRESULT COM_CALLCONV Register(BSTR path_to_signed_product_exe, BSTR display_name, std::uint32_t, std::uint32_t) = 0;
+        virtual HRESULT COM_CALLCONV Unregister() = 0;
+        virtual HRESULT COM_CALLCONV UpdateStatus(WSCSecurityProductState state) = 0;
+        virtual HRESULT COM_CALLCONV UpdateDomainProfileSubstatus(WSCSecurityProductSubStatus status) = 0;
+        virtual HRESULT COM_CALLCONV UpdatePrivateProfileSubstatus(WSCSecurityProductSubStatus status) = 0;
+        virtual HRESULT COM_CALLCONV UpdatePublicProfileSubstatus(WSCSecurityProductSubStatus status) = 0;
+    };
 } // namespace defendnot

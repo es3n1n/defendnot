@@ -2,6 +2,8 @@
 #include <string>
 #include <string_view>
 
+#include "shared/ctx.hpp"
+
 #include <Windows.h>
 
 namespace loader {
@@ -16,9 +18,17 @@ namespace loader {
         bool disable;
         bool alloc_console;
         bool verbose;
+        bool register_firewall;
         bool from_autorun;
         AutorunType autorun_type;
         bool enable_autorun;
+
+        Config& operator=(const shared::Context& ctx) {
+            verbose = ctx.verbose;
+            register_firewall = ctx.register_firewall;
+            name = ctx.name.data();
+            return *this;
+        }
     };
 
     [[nodiscard]] HANDLE inject(std::string_view dll_path, std::string_view proc_name);

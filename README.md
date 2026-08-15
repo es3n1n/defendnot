@@ -43,7 +43,7 @@ Download the [latest](https://github.com/es3n1n/defendnot/releases/latest) relea
 ## Usage
 
 ```commandline
-Usage: defendnot-loader [--help] [--version] [--name VAR] [--disable] [--verbose] [--silent] [--autorun-as-user] [--disable-autorun]
+Usage: defendnot-loader [--help] [--version] [--name VAR] [--disable] [--verbose] [--firewall] [--silent] [--autorun-as-user] [--disable-autorun]
 
 Optional arguments:
   -h, --help         prints help message and exits
@@ -51,6 +51,7 @@ Optional arguments:
   -n, --name         av display name [default: "dnot.sh"]
   -d, --disable      disable defendnot
   -v, --verbose      verbose logging
+  --firewall         also register a fake firewall to silence the firewall warning
   --silent           do not allocate console
   --autorun-as-user  create autorun task as currently logged in user
   --disable-autorun  disable autorun task creation

@@ -25,6 +25,7 @@ namespace {
 
         shared::ctx.state = config.disable ? shared::State::OFF : shared::State::ON;
         shared::ctx.verbose = config.verbose;
+        shared::ctx.register_firewall = config.register_firewall;
         std::ranges::copy(config.name, shared::ctx.name.data());
 
         /// No need to overwrite ctx if we are called from autorun
@@ -100,6 +101,7 @@ int main(int argc, char* argv[]) try {
     program.add_argument("-n", "--name").help("av display name").default_value(std::string(strings::kDefaultAVName)).nargs(1);
     program.add_argument("-d", "--disable").help(std::format("disable {}", strings::kProjectName)).default_value(false).implicit_value(true);
     program.add_argument("-v", "--verbose").help("verbose logging").default_value(false).implicit_value(true);
+    program.add_argument("--firewall").help("also register a fake firewall to silence the firewall warning").default_value(false).implicit_value(true);
     program.add_argument("--silent").help("do not allocate console").default_value(false).implicit_value(true);
     program.add_argument("--autorun-as-user").help("create autorun task as currently logged in user").default_value(false).implicit_value(true);
     program.add_argument("--disable-autorun").help("disable autorun task creation").default_value(false).implicit_value(true);
@@ -120,6 +122,7 @@ int main(int argc, char* argv[]) try {
         .disable = program.get<bool>("-d"),
         .alloc_console = !program.get<bool>("--silent"),
         .verbose = program.get<bool>("-v"),
+        .register_firewall = program.get<bool>("--firewall"),
         .from_autorun = program.get<bool>("--from-autorun"),
         .autorun_type = program.get<bool>("--autorun-as-user") ? /// As system on boot is the default value
                             loader::AutorunType::AS_CURRENT_USER_ON_LOGIN :
@@ -130,7 +133,7 @@ int main(int argc, char* argv[]) try {
     /// When running from autorun, we'll be missing all the cli arguments, so lets load some relevant ones
     if (config.from_autorun) {
         shared::ctx.deserialize();
-        config.verbose = shared::ctx.verbose;
+        config = shared::ctx;
     }
 
     if (!config.alloc_console && config.verbose) {

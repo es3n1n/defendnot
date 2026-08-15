@@ -6,6 +6,7 @@
 
 #include "shared/util.hpp"
 
+#pragma pack(push, 1)
 namespace shared {
     constexpr std::size_t kMaxNameLength = 128;
     constexpr std::string_view kCtxPath = "ctx.bin";
@@ -28,6 +29,7 @@ namespace shared {
         State state = State::ON;
         bool verbose = false;
         std::array<char, kMaxNameLength + 1> name = {0}; // +1 for the nullterm
+        bool register_firewall = false;
 
         void serialize() const {
             std::ofstream stream(detail::ctx_path(), std::ios::binary);
@@ -50,3 +52,4 @@ namespace shared {
 
     static_assert(std::is_trivially_copyable_v<Context>);
 } // namespace shared
+#pragma pack(pop)
