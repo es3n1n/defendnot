@@ -1,0 +1,107 @@
+name: Build/Release
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag for the release'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        platform: [x64, x86, ARM64]
+        configuration: [Release]
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          submodules: 'recursive'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Map platform
+        id: platform-mapping
+        run: |
+          $platform = '${{ matrix.platform }}'
+          if ($platform -eq 'x86') {
+            $platform = 'Win32'
+            echo "mapped-platform=$platform" >> $env:GITHUB_OUTPUT
+          } else {
+            echo "mapped-platform=$platform" >> $env:GITHUB_OUTPUT
+          }
+        shell: pwsh
+
+      - name: Build Solution
+        run: |
+          msbuild.exe defendnot.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }} -t:rebuild /m /verbosity:normal
+
+      - name: Copy artifacts
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $mappedPlatform = '${{ steps.platform-mapping.outputs.mapped-platform }}'
+          $config = '${{ matrix.configuration }}'
+
+          New-Item -Path "artifacts\$platform" -ItemType Directory -Force
+
+          Get-ChildItem -Path "out\$mappedPlatform" | Select-Object Name
+
+          Copy-Item -Path ".\out\$mappedPlatform\defendnot.dll" -Destination ".\artifacts\$platform\" -Verbose
+          Copy-Item -Path ".\out\$mappedPlatform\defendnot.pdb" -Destination ".\artifacts\$platform\" -Verbose
+          Copy-Item -Path ".\out\$mappedPlatform\defendnot-loader.exe" -Destination ".\artifacts\$platform\" -Verbose
+          Copy-Item -Path ".\out\$mappedPlatform\defendnot-loader.pdb" -Destination ".\artifacts\$platform\" -Verbose
+          Copy-Item -Path ".\extra-strip.bat" -Destination ".\artifacts\$platform\" -Verbose
+        shell: pwsh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.platform }}
+          path: artifacts/${{ matrix.platform }}
+          retention-days: 7
+
+  create-release:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.tag != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: release-artifacts
+
+      - name: Zip Artifacts
+        run: |
+          mkdir -p zipped-artifacts
+          cd release-artifacts
+          for platform in */; do
+            platform_name=${platform%/}
+            echo "Zipping $platform_name"
+            (cd "$platform_name" && zip -r "../../zipped-artifacts/$platform_name.zip" .)
+          done
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.event.inputs.tag }}
+          name: ${{ github.event.inputs.tag }}
+          draft: false
+          prerelease: false
+          files: zipped-artifacts/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
